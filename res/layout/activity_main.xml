@@ -6,17 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.yt.worlddatetime.MainActivity" >   
-
-    <ListView
-        android:id="@+id/listView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="34dp"
-        android:layout_marginTop="46dp" >
-    </ListView>
+    tools:context="com.yt.worlddatetime.MainActivity" >
 
     <Button
         android:id="@+id/button1"
@@ -26,4 +16,27 @@
         android:layout_alignParentTop="true"
         android:text="Button" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_below="@+id/button1"
+         >
+        
+		<ListView
+		    android:id="@+id/listView1"
+		    android:layout_width="150dp"
+		    android:layout_height="364dp" >
+		
+		  </ListView>
+    
+	    <ListView
+	        android:id="@+id/listView2"
+	        android:layout_width="150dp"
+	        android:layout_height="374dp" >
+	
+	    </ListView>
+        
+    </LinearLayout>
+    
+    
 </RelativeLayout>
