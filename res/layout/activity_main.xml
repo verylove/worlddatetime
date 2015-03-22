@@ -16,27 +16,5 @@
         android:layout_alignParentTop="true"
         android:text="Button" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_below="@+id/button1"
-         >
-        
-		<ListView
-		    android:id="@+id/listView1"
-		    android:layout_width="150dp"
-		    android:layout_height="364dp" >
-		
-		  </ListView>
-    
-	    <ListView
-	        android:id="@+id/listView2"
-	        android:layout_width="150dp"
-	        android:layout_height="374dp" >
-	
-	    </ListView>
-        
-    </LinearLayout>
-    
     
 </RelativeLayout>

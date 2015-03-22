@@ -1,4 +1,4 @@
-package com.yt.worlddatetime;
+package com.yt.worlddatetime.citys;
 
 public class Countries {
 
@@ -52,7 +52,16 @@ public class Countries {
 	}
 	
 	private int id = 0;
-	private String TextualId = null, name = null, desc = null, code = null, countries = null;
+	private String SortKey = null, TextualId = null, name = null, desc = null, code = null, countries = null;
+	
+	public String getSortKey() {
+		
+		return SortKey;
+	}
+	public void setSortKey(String sortKey) {
+		SortKey = sortKey;
+	}
+
 	double longitude = 0 , latitude = 0;
 	
 	
