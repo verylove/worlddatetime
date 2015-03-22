@@ -1,30 +1,40 @@
 package com.yt.worlddatetime.citys;
 
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.PixelFormat;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,6 +42,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -42,6 +53,7 @@ import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,7 +61,7 @@ import com.yt.worlddatetime.R;
 import com.yt.worlddatetime.citys.MyLetterListView.OnTouchingLetterChangedListener;
 
 public class ListCountriesActivity extends Activity {
-	
+
 	private static final String TAG = "MainActivity";
 
 	private Button queryBtn;// 查询按钮
@@ -61,25 +73,33 @@ public class ListCountriesActivity extends Activity {
 	private OverlayThread overlayThread;
 	private TextView overlay;// 显示索引字母
 	private MyLetterListView letterListView;
-	private ArrayList<Countries> mListLocalContact;
+	private ArrayList<Countries> mListLocalCity;
 	private TextWatcher textWatcher = new MyFindContactTextWatcher();
 	private OnItemClickListener itemClickListener = new MyListItemClickListener();
 	private OnItemLongClickListener itemLongClickListener = new MyOnItemLongClickListener();
 	private OnClickListener clickListener = new MyOnClickListener();
+	private ProgressDialog progressbar;
 
 	public String[] sections;
 
 	private CountriesAdapter adapter;
 
+	private View MyLetterListView01;
+	
+	public static long startTime = 0;
+	
 	private boolean queryFlag = true;
 	private List<Countries> queryList = new ArrayList<Countries>();
 
 	public boolean overlayFlag = true;
 
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// 设置窗口特征：启用显示进度的进度条
+		requestWindowFeature(Window.FEATURE_PROGRESS);
+
 		setContentView(R.layout.cityslist);
 
 		initwidget();
@@ -91,49 +111,45 @@ public class ListCountriesActivity extends Activity {
 		letterListView
 				.setOnTouchingLetterChangedListener(new LetterListViewListener());
 
-		//asyncQuery = new MyAsyncQueryHandler(getContentResolver());
+		asyncQuery = new MyAsyncQueryHandler(getContentResolver());
 		alphaIndexer = new HashMap<String, Integer>();
 		handler = new Handler();
 		overlayThread = new OverlayThread();
 		queryContent.addTextChangedListener(textWatcher);
-		initData();
-		Log.i("YT","---+"+alphaIndexer.toString());
 	}
-	
+
 	/**
 	 * 初始化部件
 	 */
 	private void initwidget() {
 		queryBtn = (Button) findViewById(R.id.queryBtn);
 		queryContent = (EditText) findViewById(R.id.queryContent);
-		listView = (ListView) findViewById(R.id.listview);
+		listView = (ListView) findViewById(R.id.listview);	
+		MyLetterListView01 = (View)findViewById(R.id.MyLetterListView01);
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
+		startTime = System.nanoTime(); 
+		
+		Uri uri = Uri
+				.parse("content://com.yt.worlddatetime.citys.CityProvide/cities?notify=false");
+		String[] arrayOfString = { "_id", "display_name", "alternate_names",
+				"timezone", "country_code","utc_offset" };
+		asyncQuery.startQuery(0, null, uri, arrayOfString, null, null,
+				"display_name asc");
+
+		final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+
+		progressbar = ProgressDialog.show(this, "Loading Citys", "Loading...");
+
 	}
 
 	public void initData() {
-		
-		List<Countries> tmpList = new ArrayList<Countries>();
-		
+
 		String Result = "";
-		try {
-
-			InputStreamReader inputReader = new InputStreamReader(
-					getResources().getAssets().open("datetime"));
-			BufferedReader bufReader = new BufferedReader(inputReader);
-			String line = "";
-
-			while ((line = bufReader.readLine()) != null) {
-				Result += line;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		// Result = "";
 		JSONArray jsonArray = null;
 
 		try {
@@ -142,26 +158,23 @@ public class ListCountriesActivity extends Activity {
 			e.printStackTrace();
 		}
 
-		
-		
 		JSONArray item = null;
 
 		for (int i = 0; i < jsonArray.length(); i++) {
 			item = null;
-			
+
 			Countries map = new Countries();
-			
+
 			try {
 				item = jsonArray.getJSONArray(i);
 			} catch (JSONException e) {
 				e.printStackTrace();
-			} 
+			}
 
-			
 			try {
-				
+
 				map.setSortKey(item.getString(2));
-				
+
 				map.setId(item.getInt(0));
 				map.setTextualId(item.getString(1));
 				map.setName(item.getString(2));
@@ -170,41 +183,83 @@ public class ListCountriesActivity extends Activity {
 				map.setCountries(item.getString(5));
 				map.setLongitude(item.getDouble(6));
 				map.setLatitude(item.getDouble(7));
-				
+
 			} catch (JSONException e) {
 				e.printStackTrace();
-			} 
-			
-			tmpList.add(map);
-			
+			}
+
+			// tmpList.add(map);
+
 			map = null;
 		}
 
-		Collections.sort(tmpList,new SortByName());
-			
-		
-		setAdapter(tmpList);
+		// Collections.sort(tmpList, new SortByName());
+
+		// setAdapter(tmpList);
 
 	}
-	
-	class SortByName implements Comparator{
+
+	class SortByName implements Comparator {
 
 		@Override
 		public int compare(Object lhs, Object rhs) {
-		    Countries c1 = (Countries)lhs;
-		    Countries c2 = (Countries)rhs;
-		    
-		    return c1.getName().compareToIgnoreCase(c2.getName());
-		    	
+			Countries c1 = (Countries) lhs;
+			Countries c2 = (Countries) rhs;
+
+			return c1.getName().compareToIgnoreCase(c2.getName());
+
 		}
-		
+
 	}
-	
+
 	private void setAdapter(List<Countries> list) {
 		adapter = new CountriesAdapter(this, list);
-		listView.setAdapter(adapter);
+		listView.setAdapter(adapter);		
 	}
-	
+
+	public class setIndex extends AsyncTask<List<Countries>, Integer, String>{
+		
+
+		
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			// TODO Auto-generated method stub
+			MyLetterListView01.setVisibility(View.VISIBLE);
+		}
+
+		@Override
+		protected String doInBackground(List<Countries>... params) {
+
+			alphaIndexer = new HashMap<String, Integer>();
+			sections = new String[params[0].size()];
+			
+
+			for (int i=0;i<params[0].size();i++) {
+				// 当前汉语拼音首字母
+				String currentStr = getAlpha(params[0].get(i).getName());
+				// 上一个汉语拼音首字母，如果不存在为“ ”
+				String previewStr = (i - 1) >= 0 ? getAlpha(params[0].get(i - 1)
+						.getName()) : " ";
+				if (!previewStr.equals(currentStr)) {
+					String name = getAlpha(params[0].get(i).getName());
+					alphaIndexer.put(name, i);
+					sections[i] = name;
+				}
+			}
+			long consumingTime = System.nanoTime() - startTime;
+			Log.d("YT",consumingTime/1000+"微秒--setAdapter");
+			
+			publishProgress(100);
+			
+			return null;
+		}
+
+		
+
+
+		
+		
+	}
 	
 	public class CountriesAdapter extends BaseAdapter implements Filterable {
 
@@ -212,28 +267,16 @@ public class ListCountriesActivity extends Activity {
 		private List<Countries> list;
 		private LayoutInflater mInflater;
 
-		
-		public CountriesAdapter(Context context,List<Countries> list){
+		public CountriesAdapter(Context context, List<Countries> list) {
 			this.list = list;
 			this.mInflater = LayoutInflater.from(context);
 			mFilter = new MyContactFilter();
-			alphaIndexer = new HashMap<String, Integer>();
-			sections = new String[list.size()];
-
-			for (int i = 0; i < list.size(); i++) {
-				// 当前汉语拼音首字母
-				String currentStr = getAlpha(list.get(i).getSortKey());
-				// 上一个汉语拼音首字母，如果不存在为“ ”
-				String previewStr = (i - 1) >= 0 ? getAlpha(list.get(i - 1)
-						.getSortKey()) : " ";
-				if (!previewStr.equals(currentStr)) {
-					String name = getAlpha(list.get(i).getSortKey());
-					alphaIndexer.put(name, i);
-					sections[i] = name;
-				}
-			}
+			
+			setIndex task = new setIndex();  
+	        task.execute(this.list);
+			
 		}
-		
+
 		@Override
 		public int getCount() {
 			return list.size();
@@ -257,30 +300,32 @@ public class ListCountriesActivity extends Activity {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-		
-			ViewHolder holder = null;
-			
-			if(convertView == null)
-			{
-				holder = new ViewHolder();
-				convertView  = mInflater.inflate(R.layout.listitem, null);
-				
-				holder.name = (TextView)convertView.findViewById(R.id.name);
-				holder.desc = (TextView)convertView.findViewById(R.id.desc);
-			
-				convertView.setTag(holder);
-			}else{		
-				holder = (ViewHolder)convertView.getTag();		
-			}
-			
 
-			holder.name.setText(list.get(position).getName());
-			holder.desc.setText(list.get(position).getDesc());
-						
+			ViewHolder holder = null;
+
+			if (convertView == null) {
+				holder = new ViewHolder();
+				convertView = mInflater.inflate(R.layout.listitem, null);
+
+				holder.name = (TextView) convertView.findViewById(R.id.name);
+				holder.desc = (TextView) convertView.findViewById(R.id.desc);
+
+				convertView.setTag(holder);
+			} else {
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			holder.name.setText(list.get(position).getName()+list.get(position).getCode());
+			if(".".contains(list.get(position).getDesc())){
+				holder.desc.setText("GMT "+list.get(position).getDesc().replace(".5", "")+":30");
+			}else{
+				holder.desc.setText("GMT "+list.get(position).getDesc()+":00");
+			}
+
 			return convertView;
 		}
 
-		public final class ViewHolder{
+		public final class ViewHolder {
 			public TextView name;
 			public TextView desc;
 		}
@@ -303,8 +348,6 @@ public class ListCountriesActivity extends Activity {
 			return false;
 		}
 
-	
-		
 		/**
 		 * A Filter which select Contact to display by searching in ther Jid.
 		 */
@@ -322,7 +365,7 @@ public class ListCountriesActivity extends Activity {
 				Log.d(TAG, "performFiltering");
 				List<Countries> result = new LinkedList<Countries>();
 				String condition = (String) constraint;
-				condition = condition.trim();
+				condition = condition.trim().toLowerCase();
 				// List<Contact> target = mContactOnGroup.get(mSelectedGroup);
 				// L.d("target="+target);
 				if (queryFlag) {
@@ -336,9 +379,10 @@ public class ListCountriesActivity extends Activity {
 						if ("".equals(condition)) {
 							result.add(obj);
 						} else if (obj.getSortKey() != null
-								&& obj.getSortKey().contains(condition)
+								&& obj.getSortKey().toLowerCase()
+										.contains(condition)
 								|| (obj.getName() != null && obj.getName()
-										.contains(condition))) {
+										.toLowerCase().contains(condition))) {
 							result.add(obj);
 						}
 					}
@@ -357,6 +401,7 @@ public class ListCountriesActivity extends Activity {
 				Log.d(TAG, "publishResults");
 				List<Countries> contacts = (List<Countries>) results.values;
 				setAdapter(contacts);
+				setProgressBarIndeterminateVisibility(false);
 			}
 		}
 
@@ -366,16 +411,16 @@ public class ListCountriesActivity extends Activity {
 			return mFilter;
 		}
 
-	
-	
-}
+	}
 
 	/**
 	 * 实现通讯录字母索引
 	 */
 	// 查询联系人
-	/*private class MyAsyncQueryHandler extends AsyncQueryHandler {
 
+	private class MyAsyncQueryHandler extends AsyncQueryHandler {
+
+		@SuppressLint("HandlerLeak")
 		public MyAsyncQueryHandler(ContentResolver cr) {
 			super(cr);
 
@@ -383,34 +428,44 @@ public class ListCountriesActivity extends Activity {
 
 		@Override
 		protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
-			/*if (cursor != null && cursor.getCount() > 0) {
-				mListLocalContact = new ArrayList<Countries>();
+			setProgressBarIndeterminateVisibility(false);
+			if (progressbar.isShowing()) {
+				progressbar.dismiss();
+			}
+			
+			long consumingTime = System.nanoTime() - startTime;
+			Log.d("YT",consumingTime/1000+"微秒");
+			
+			if (cursor != null && cursor.getCount() > 0) {
+				mListLocalCity = new ArrayList<Countries>();
 				cursor.moveToFirst();
 
 				for (int i = 0; i < cursor.getCount(); i++) {
 					Countries cv = new Countries();
 					cursor.moveToPosition(i);
-					String name = cursor.getString(1);
-					String number = cursor.getString(2);
-					String sortKey = cursor.getString(3);
-					if (number.startsWith("+86")) {
-						cv.setName(name);
-						cv.setDesc(number.substring(3));// 去掉+86
-						cv.setSortKey(sortKey);
-					} else {
-						cv.setName(name);
-						cv.setDesc(number);
-						cv.setSortKey(sortKey);
-					}
-					mListLocalContact.add(cv);
+
+					cv.setId(cursor.getInt(0));
+					cv.setName(cursor.getString(1));
+					cv.setSortKey(cursor.getString(2));
+					cv.setTextualId(cursor.getString(3));
+					cv.setCode(cursor.getString(4));
+					cv.setDesc(cursor.getString(5));
+
+					// TimeZone localTimeZone2 =
+					// TimeZone.getTimeZone(cursor.getString(2));
+					// GregorianCalendar localGregorianCalendar2 = new
+					// GregorianCalendar(localTimeZone2);
+					// localGregorianCalendar2.setTimeInMillis(System.currentTimeMillis());
+
+					mListLocalCity.add(cv);
 				}
-				if (mListLocalContact.size() > 0) {
-					setAdapter(mListLocalContact);
+				if (mListLocalCity.size() > 0) {
+					setAdapter(mListLocalCity);
 				}
 			}
 		}
 
-	}*/
+	}
 
 	// 初始化汉语拼音首字母弹出提示框
 	private void initOverlay() {
@@ -429,27 +484,27 @@ public class ListCountriesActivity extends Activity {
 	}
 
 	private class LetterListViewListener implements
-							OnTouchingLetterChangedListener {
+			OnTouchingLetterChangedListener {
 
-	@Override
-	public void onTouchingLetterChanged(final String s) {
-		if (overlayFlag) {
-			initOverlay();
-			overlayFlag = false;
+		@Override
+		public void onTouchingLetterChanged(final String s) {
+			if (overlayFlag) {
+				initOverlay();
+				overlayFlag = false;
+			}
+			if (alphaIndexer.get(s) != null) {
+				int position = alphaIndexer.get(s);
+				listView.setSelection(position);
+				overlay.setText(sections[position]);
+				overlay.setVisibility(View.VISIBLE);
+				handler.removeCallbacks(overlayThread);
+				// 延迟一秒后执行，让overlay为不可见
+				handler.postDelayed(overlayThread, 1500);
+			}
 		}
-		if (alphaIndexer.get(s) != null) {
-			int position = alphaIndexer.get(s);
-			listView.setSelection(position);
-			overlay.setText(sections[position]);
-			overlay.setVisibility(View.VISIBLE);
-			handler.removeCallbacks(overlayThread);
-			// 延迟一秒后执行，让overlay为不可见
-			handler.postDelayed(overlayThread, 1500);
-		}
+
 	}
-	
-	}	
-		
+
 	// 设置overlay不可见
 	private class OverlayThread implements Runnable {
 
@@ -459,7 +514,7 @@ public class ListCountriesActivity extends Activity {
 		}
 
 	}
-	
+
 	// 获得汉语拼音首字母
 	private String getAlpha(String str) {
 		if (str == null) {
@@ -480,7 +535,6 @@ public class ListCountriesActivity extends Activity {
 		}
 	}
 
-	
 	class MyFindContactTextWatcher implements TextWatcher {
 
 		@Override
@@ -493,47 +547,64 @@ public class ListCountriesActivity extends Activity {
 		public void onTextChanged(CharSequence s, int start, int before,
 				int count) {
 			Log.e(TAG, "onTextChanged...");
+
 		}
 
 		@Override
 		public void afterTextChanged(Editable s) {
 			Log.e(TAG, "onTextChanged...");
-			adapter.getFilter().filter(queryContent.getText());
+			// adapter.getFilter().filter(queryContent.getText());
 		}
 
 	}
-	
+
 	class MyOnClickListener implements OnClickListener {
 		@Override
 		public void onClick(View v) {
+			setProgressBarIndeterminateVisibility(true);
 			// 查询过滤
 			adapter.getFilter().filter(queryContent.getText());
 
 		}
 	}
-	
+
 	// listView item点击事件
 	class MyListItemClickListener implements OnItemClickListener {
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position,
-					long id) {
-				Toast.makeText(ListCountriesActivity.this,
-						String.valueOf(position) + " id=" + id, 0).show();
-
-			}
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+			Countries city = (Countries)listView.getAdapter().getItem(position);
+			
+			TimeZone localTimeZone2 = TimeZone.getTimeZone(city.getTextualId());
+            GregorianCalendar localGregorianCalendar2 = new GregorianCalendar(localTimeZone2);
+            String display_name = localTimeZone2.getDisplayName();
+            localGregorianCalendar2.setTimeInMillis(System.currentTimeMillis());
+            
+            
+            String language = Locale.getDefault().getLanguage();
+            Log.d("YT",language+""+city.getCode()+""+city.getTextualId());
+            DateFormat localDateFormat = DateFormat.getDateTimeInstance(DateFormat.YEAR_FIELD,DateFormat.ERA_FIELD,new Locale(language,city.getCode()));
+            localDateFormat.setTimeZone(localTimeZone2);
+            String noewtime = localDateFormat.format(localGregorianCalendar2.getTime());
+           
+            
+			
+			Toast.makeText(ListCountriesActivity.this,
+					String.valueOf(position) + " id=" + city.getId()+" "+display_name+" "+noewtime, 1).show();
 
 		}
+	}
 
 	// listView item长按事件
 	class MyOnItemLongClickListener implements OnItemLongClickListener {
 
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				Toast.makeText(ListCountriesActivity.this, id + " 长按 " + position, 0)
-						.show();
-				return false;
-			}
-		}	
+		@Override
+		public boolean onItemLongClick(AdapterView<?> parent, View view,
+				int position, long id) {
+			Toast.makeText(ListCountriesActivity.this, id + " 长按 " + position,
+					0).show();
+			return false;
+		}
+	}
 }

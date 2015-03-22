@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF" >
+
+   <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/queryBtn"
+            android:layout_width="41dp"
+            android:layout_height="41dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/searchbtn" />
+
+        <EditText
+            android:id="@+id/queryContent"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/queryBtn"
+            android:hint="@string/inputcity" />
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal"
+        android:padding="10px" >
+
+        <ListView
+            android:id="@+id/listview"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@null"
+            android:cacheColorHint="#00000000"
+            android:divider="#d9d9d9"
+            android:dividerHeight="1dip"
+            android:textFilterEnabled="true"
+            android:transcriptMode="disabled" />
+
+        <com.yt.worlddatetime.citys.MyLetterListView
+            android:id="@+id/MyLetterListView01"
+            android:layout_width="30dip"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:visibility="invisible"
+            android:background="#40000000" />
+    </RelativeLayout>
+
+</LinearLayout>
