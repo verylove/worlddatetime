@@ -27,14 +27,15 @@ public final class R {
         public static final int searchbtn=0x7f020002;
     }
     public static final class id {
-        public static final int MyLetterListView01=0x7f080004;
-        public static final int alpha=0x7f080005;
+        public static final int MyLetterListView01=0x7f080005;
+        public static final int alpha=0x7f080006;
         public static final int button1=0x7f080000;
-        public static final int desc=0x7f080007;
-        public static final int listview=0x7f080003;
-        public static final int name=0x7f080006;
-        public static final int queryBtn=0x7f080001;
-        public static final int queryContent=0x7f080002;
+        public static final int desc=0x7f080008;
+        public static final int listview=0x7f080004;
+        public static final int mycitylist=0x7f080001;
+        public static final int name=0x7f080007;
+        public static final int queryBtn=0x7f080002;
+        public static final int queryContent=0x7f080003;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;

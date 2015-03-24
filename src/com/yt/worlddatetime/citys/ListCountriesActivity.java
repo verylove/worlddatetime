@@ -24,6 +24,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
@@ -57,6 +58,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.yt.worlddatetime.Mycitys;
 import com.yt.worlddatetime.R;
 import com.yt.worlddatetime.citys.MyLetterListView.OnTouchingLetterChangedListener;
 
@@ -80,6 +82,10 @@ public class ListCountriesActivity extends Activity {
 	private OnClickListener clickListener = new MyOnClickListener();
 	private ProgressDialog progressbar;
 
+	
+	private SQLiteDatabase db = null;
+	
+	
 	public String[] sections;
 
 	private CountriesAdapter adapter;
@@ -316,7 +322,8 @@ public class ListCountriesActivity extends Activity {
 			}
 
 			holder.name.setText(list.get(position).getName()+list.get(position).getCode());
-			if(".".contains(list.get(position).getDesc())){
+
+			if(list.get(position).getDesc().contains(".")){
 				holder.desc.setText("GMT "+list.get(position).getDesc().replace(".5", "")+":30");
 			}else{
 				holder.desc.setText("GMT "+list.get(position).getDesc()+":00");
@@ -450,6 +457,7 @@ public class ListCountriesActivity extends Activity {
 					cv.setTextualId(cursor.getString(3));
 					cv.setCode(cursor.getString(4));
 					cv.setDesc(cursor.getString(5));
+					
 
 					// TimeZone localTimeZone2 =
 					// TimeZone.getTimeZone(cursor.getString(2));
@@ -588,10 +596,27 @@ public class ListCountriesActivity extends Activity {
             localDateFormat.setTimeZone(localTimeZone2);
             String noewtime = localDateFormat.format(localGregorianCalendar2.getTime());
            
-            
-			
-			Toast.makeText(ListCountriesActivity.this,
-					String.valueOf(position) + " id=" + city.getId()+" "+display_name+" "+noewtime, 1).show();
+
+    		Mycitys citys = new Mycitys(getApplicationContext());
+    		db = citys.getWritableDatabase();
+    		ContentValues cv = new ContentValues();
+    		cv.put("display_name", city.getName());
+    		cv.put("alternate_names", city.getSortKey());
+    		cv.put("latitude", 0);
+    		cv.put("longitude", 0);
+    		cv.put("country_code", city.getCode());
+    		cv.put("admin1_code", 0);
+    		cv.put("timezone", city.getTextualId());
+    		cv.put("utc_offset", city.getDesc());    		
+    		long result = db.insert("cities", null, cv);
+    		//db.execSQL("INSERT INTO cities"
+    		//		+ " (display_name, alternate_names, latitude, longitude, country_code, admin1_code, timezone, utc_offset) VALUES"
+    		//		+ " ('"+display_name+"','"+city.getSortKey()+"',0,0,'"+city.getCode()+"','',"+city.getTextualId()+", '"+city.getDesc()+"')");
+    		
+    		
+    		ListCountriesActivity.this.finish();
+			//Toast.makeText(ListCountriesActivity.this,
+			//		String.valueOf(position) + " id=" + city.getId()+" "+display_name+" "+noewtime, 1).show();
 
 		}
 	}
