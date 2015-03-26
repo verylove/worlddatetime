@@ -104,7 +104,7 @@ public class ListCountriesActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		// 设置窗口特征：启用显示进度的进度条
-		requestWindowFeature(Window.FEATURE_PROGRESS);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);  
 
 		setContentView(R.layout.cityslist);
 
@@ -146,10 +146,10 @@ public class ListCountriesActivity extends Activity {
 				"timezone", "country_code","utc_offset" };
 		asyncQuery.startQuery(0, null, uri, arrayOfString, null, null,
 				"display_name asc");
-
-		final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-
-		progressbar = ProgressDialog.show(this, "Loading Citys", "Loading...");
+		
+		setProgressBarIndeterminateVisibility(true);
+		//final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+		//progressbar = ProgressDialog.show(this, "Loading Citys", "Loading...");
 
 	}
 
@@ -436,9 +436,9 @@ public class ListCountriesActivity extends Activity {
 		@Override
 		protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
 			setProgressBarIndeterminateVisibility(false);
-			if (progressbar.isShowing()) {
-				progressbar.dismiss();
-			}
+			//if (progressbar.isShowing()) {
+			//	progressbar.dismiss();
+			//}
 			
 			long consumingTime = System.nanoTime() - startTime;
 			Log.d("YT",consumingTime/1000+"微秒");
