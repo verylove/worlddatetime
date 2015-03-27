@@ -81,7 +81,7 @@ public class CityProvide extends ContentProvider {
 	  private static ContentValues b = new ContentValues();
 	}
 	
-	private static final  class DBHelper extends SQLiteOpenHelper{
+	public static final  class DBHelper extends SQLiteOpenHelper{
 	    
 		private Context context;
 		

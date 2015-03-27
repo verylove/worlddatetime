@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="title_bg" parent="android:Theme.Holo.Light" >
+
+        <item name="android:windowTitleBackgroundStyle">@style/Titleground</item>
+    </style>
+    <style name="Titleground">  
+        <item name="android:background">#18b4ed</item> 
+
+   
+    </style>  
+</resources>

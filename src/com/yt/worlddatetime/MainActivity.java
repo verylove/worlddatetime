@@ -16,19 +16,24 @@ import java.util.zip.Inflater;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import com.yt.worlddatetime.citys.CityProvide.DBHelper;
 import com.yt.worlddatetime.citys.Countries;
 import com.yt.worlddatetime.citys.ListCountriesActivity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -43,6 +48,7 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AnalogClock;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -53,19 +59,63 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 
 	private ListView listview;
+	public static  ArrayList<Countries> mListLocalCity = null;
+	
 
-	Intent list = new Intent();
 	final List<Map<String, ?>> data = new ArrayList<Map<String, ?>>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_main);
-
 	
-
+		AsyncTask asyncTask = new AsyncInitCitys();
+		asyncTask.execute("");
+		
+		Log.d("YT","---------------test");
 	}
 
+	
+	class AsyncInitCitys extends AsyncTask{
+
+		@Override
+		protected Object doInBackground(Object... arg0) {
+
+			mListLocalCity = new ArrayList<Countries>();
+			
+			DBHelper citys = new DBHelper(getApplicationContext());
+			
+			SQLiteDatabase db = null;
+			db = citys.getReadableDatabase();
+			Cursor cursor = db.query("cities", null, null, null, null, null, null);
+
+			cursor.moveToFirst();
+
+			for (int i = 0; i < cursor.getCount(); i++) {
+				Countries cv = new Countries();
+				cursor.moveToPosition(i);
+
+				cv.setId(cursor.getInt(0));
+				cv.setName(cursor.getString(1));
+				cv.setSortKey(cursor.getString(2));
+				cv.setTextualId(cursor.getString(7));
+				cv.setCode(cursor.getString(5));
+				cv.setDesc(cursor.getString(8));
+				
+				mListLocalCity.add(cv);
+			}
+			
+			Log.d("YT","Success loading !!");
+			
+			return null;
+		}
+		
+	}
+	
+	
+	
+	
 	// 菜单处理部分
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {// 建立菜单
@@ -76,25 +126,25 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
-	    public boolean onOptionsItemSelected(MenuItem item) { //菜单响应函数
-	        switch (item.getItemId()) {
-	        case R.id.scan:
-	        	list.setClass(getApplicationContext(),
-						ListCountriesActivity.class);
-				startActivity(list);
-	            return true;
-	        case R.id.quit:
-	            finish();
-	            return true;
-	        case R.id.clear:
-	           
-	            return true;
-	        case R.id.save:
+	public boolean onOptionsItemSelected(MenuItem item) { // 菜单响应函数
+		switch (item.getItemId()) {
+		case R.id.add:
+			Intent list = new Intent();
+			list.setClass(getApplicationContext(), ListCountriesActivity.class);
+			startActivity(list);
+			return true;
+		case R.id.quit:
+			finish();
+			return true;
+		case R.id.update:
 
-	            return true;
-	        }
-	        return false;
-	    }
+			return true;
+		case R.id.about:
+
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	protected void onResume() {
@@ -142,6 +192,7 @@ public class MainActivity extends Activity {
 	final class ViewMyCity {
 		public TextView name;
 		public TextView time;
+		public com.yt.worlddatetime.tools.AnalogClock analogClock;
 	}
 
 	class onLongClick implements OnItemClickListener {
@@ -308,7 +359,8 @@ public class MainActivity extends Activity {
 						.findViewById(R.id.CityName);
 				mycity.time = (TextView) convertView
 						.findViewById(R.id.CityTime);
-
+				mycity.analogClock = (com.yt.worlddatetime.tools.AnalogClock) convertView
+						.findViewById(R.id.analogClock);
 				convertView.setTag(mycity);
 			} else {
 				mycity = (ViewMyCity) convertView.getTag();
@@ -327,7 +379,7 @@ public class MainActivity extends Activity {
 					DateFormat.YEAR_FIELD,
 					new Locale(language, n.get("country_code")));
 			DateFormat localTimeFormat = DateFormat.getTimeInstance(
-					DateFormat.DEFAULT,
+					DateFormat.SHORT,
 					new Locale(language, n.get("country_code")));
 			localDateFormat.setTimeZone(localTimeZone2);
 			localTimeFormat.setTimeZone(localTimeZone2);
@@ -337,8 +389,8 @@ public class MainActivity extends Activity {
 					.getTime());
 
 			mycity.name.setText(n.get("name") + "\n" + display_name);
-			mycity.time.setText(nowdate + "  \n " + nowtime);
-
+			mycity.time.setText(nowdate + "\n" + nowtime);
+			mycity.analogClock.setmTimezone(n.get("timezone"));
 			return convertView;
 		}
 

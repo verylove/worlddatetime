@@ -13,9 +13,25 @@ public final class R {
         public static final int dialog_exit=0x7f040001;
     }
     public static final class attr {
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int dial=0x7f010000;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int hand_hour=0x7f010001;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int hand_minute=0x7f010002;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int hand_second=0x7f010003;
     }
     public static final class color {
-        public static final int transparent=0x7f050000;
+        public static final int transparent=0x7f060000;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -25,32 +41,37 @@ public final class R {
          would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively).
     
          */
-        public static final int activity_horizontal_margin=0x7f060000;
-        public static final int activity_vertical_margin=0x7f060001;
+        public static final int activity_horizontal_margin=0x7f070000;
+        public static final int activity_vertical_margin=0x7f070001;
     }
     public static final class drawable {
         public static final int button=0x7f020000;
-        public static final int ic_launcher=0x7f020001;
-        public static final int poptext=0x7f020002;
-        public static final int searchbtn=0x7f020003;
+        public static final int clock_dial=0x7f020001;
+        public static final int clock_hand_hour=0x7f020002;
+        public static final int clock_hand_minute=0x7f020003;
+        public static final int clock_hand_second=0x7f020004;
+        public static final int ic_launcher=0x7f020005;
+        public static final int poptext=0x7f020006;
+        public static final int searchbtn=0x7f020007;
     }
     public static final class id {
         public static final int CityName=0x7f0a0008;
-        public static final int CityTime=0x7f0a0009;
+        public static final int CityTime=0x7f0a000a;
         public static final int MyLetterListView01=0x7f0a0004;
+        public static final int about=0x7f0a000f;
+        public static final int add=0x7f0a000d;
         public static final int alpha=0x7f0a0005;
-        public static final int btnDel=0x7f0a000a;
-        public static final int btnNodel=0x7f0a000b;
-        public static final int clear=0x7f0a000e;
+        public static final int analogClock=0x7f0a0009;
+        public static final int btnDel=0x7f0a000b;
+        public static final int btnNodel=0x7f0a000c;
         public static final int desc=0x7f0a0007;
         public static final int listview=0x7f0a0003;
         public static final int mycitylist=0x7f0a0000;
         public static final int name=0x7f0a0006;
         public static final int queryBtn=0x7f0a0001;
         public static final int queryContent=0x7f0a0002;
-        public static final int quit=0x7f0a000d;
-        public static final int save=0x7f0a000f;
-        public static final int scan=0x7f0a000c;
+        public static final int quit=0x7f0a0010;
+        public static final int update=0x7f0a000e;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -64,8 +85,19 @@ public final class R {
         public static final int main=0x7f090000;
     }
     public static final class string {
-        public static final int app_name=0x7f070000;
-        public static final int inputcity=0x7f070001;
+        public static final int about=0x7f080004;
+        public static final int addcity=0x7f080002;
+        public static final int app_name=0x7f080000;
+        public static final int friday=0x7f08000a;
+        public static final int inputcity=0x7f080001;
+        public static final int monday=0x7f080006;
+        public static final int quit=0x7f080005;
+        public static final int saturday=0x7f08000b;
+        public static final int sunday=0x7f08000c;
+        public static final int thursday=0x7f080009;
+        public static final int tuesday=0x7f080007;
+        public static final int update=0x7f080003;
+        public static final int wednesday=0x7f080008;
     }
     public static final class style {
         /** 
@@ -89,14 +121,80 @@ public final class R {
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f080000;
+        public static final int AppBaseTheme=0x7f050001;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f080001;
-        public static final int dialogAnimationStyle=0x7f080003;
+        public static final int AppTheme=0x7f050002;
+        /**  first style 
+         */
+        public static final int AppWidget=0x7f050000;
+        public static final int Titleground=0x7f050006;
+        public static final int dialogAnimationStyle=0x7f050004;
         /**  模糊 
          */
-        public static final int tip_dialog=0x7f080002;
+        public static final int tip_dialog=0x7f050003;
+        public static final int title_bg=0x7f050005;
     }
+    public static final class styleable {
+        /** Attributes that can be used with a AnalogClock.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #AnalogClock_dial com.yt.worlddatetime:dial}</code></td><td></td></tr>
+           <tr><td><code>{@link #AnalogClock_hand_hour com.yt.worlddatetime:hand_hour}</code></td><td></td></tr>
+           <tr><td><code>{@link #AnalogClock_hand_minute com.yt.worlddatetime:hand_minute}</code></td><td></td></tr>
+           <tr><td><code>{@link #AnalogClock_hand_second com.yt.worlddatetime:hand_second}</code></td><td></td></tr>
+           </table>
+           @see #AnalogClock_dial
+           @see #AnalogClock_hand_hour
+           @see #AnalogClock_hand_minute
+           @see #AnalogClock_hand_second
+         */
+        public static final int[] AnalogClock = {
+            0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.yt.worlddatetime.R.attr#dial}
+          attribute's value can be found in the {@link #AnalogClock} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name com.yt.worlddatetime:dial
+        */
+        public static final int AnalogClock_dial = 0;
+        /**
+          <p>This symbol is the offset where the {@link com.yt.worlddatetime.R.attr#hand_hour}
+          attribute's value can be found in the {@link #AnalogClock} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name com.yt.worlddatetime:hand_hour
+        */
+        public static final int AnalogClock_hand_hour = 1;
+        /**
+          <p>This symbol is the offset where the {@link com.yt.worlddatetime.R.attr#hand_minute}
+          attribute's value can be found in the {@link #AnalogClock} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name com.yt.worlddatetime:hand_minute
+        */
+        public static final int AnalogClock_hand_minute = 2;
+        /**
+          <p>This symbol is the offset where the {@link com.yt.worlddatetime.R.attr#hand_second}
+          attribute's value can be found in the {@link #AnalogClock} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name com.yt.worlddatetime:hand_second
+        */
+        public static final int AnalogClock_hand_second = 3;
+    };
 }

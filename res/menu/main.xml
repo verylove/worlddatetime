@@ -3,23 +3,24 @@
     tools:context="com.yt.worlddatetime.MainActivity" >
 
     <item
-        android:id="@+id/scan"
+        android:id="@+id/add"
         android:icon="@android:drawable/ic_menu_search"
-        android:title="添加时区"/>
+        android:title="@string/addcity"/>
+
     <item
+        android:id="@+id/update"
+        android:icon="@android:drawable/ic_input_delete"
+        android:title="@string/update">
+    </item>
+    <item
+        android:id="@+id/about"
+        android:icon="@android:drawable/ic_menu_help"
+        android:title="@string/about">
+    </item>
+        <item
         android:id="@+id/quit"
         android:icon="@android:drawable/ic_delete"
-        android:title="quit">
-    </item>
-    <item
-        android:id="@+id/clear"
-        android:icon="@android:drawable/ic_input_delete"
-        android:title="clear">
-    </item>
-    <item
-        android:id="@+id/save"
-        android:icon="@android:drawable/ic_menu_save"
-        android:title="save">
+        android:title="@string/quit">
     </item>
 
 </menu>

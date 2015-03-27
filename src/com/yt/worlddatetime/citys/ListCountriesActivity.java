@@ -26,6 +26,7 @@ import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
@@ -58,6 +59,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.yt.worlddatetime.MainActivity;
 import com.yt.worlddatetime.Mycitys;
 import com.yt.worlddatetime.R;
 import com.yt.worlddatetime.citys.MyLetterListView.OnTouchingLetterChangedListener;
@@ -99,10 +101,12 @@ public class ListCountriesActivity extends Activity {
 
 	public boolean overlayFlag = true;
 
-	@Override
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
+		this.queryList = MainActivity.mListLocalCity;
+		Log.d("YT",this.queryList.size()+"");
 		// 设置窗口特征：启用显示进度的进度条
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);  
 
@@ -117,7 +121,7 @@ public class ListCountriesActivity extends Activity {
 		letterListView
 				.setOnTouchingLetterChangedListener(new LetterListViewListener());
 
-		asyncQuery = new MyAsyncQueryHandler(getContentResolver());
+		// asyncQuery = new MyAsyncQueryHandler(getContentResolver());
 		alphaIndexer = new HashMap<String, Integer>();
 		handler = new Handler();
 		overlayThread = new OverlayThread();
@@ -132,6 +136,7 @@ public class ListCountriesActivity extends Activity {
 		queryContent = (EditText) findViewById(R.id.queryContent);
 		listView = (ListView) findViewById(R.id.listview);	
 		MyLetterListView01 = (View)findViewById(R.id.MyLetterListView01);
+		setAdapter(this.queryList);
 	}
 
 	@Override
@@ -139,15 +144,16 @@ public class ListCountriesActivity extends Activity {
 		super.onResume();
 		
 		startTime = System.nanoTime(); 
-		
-		Uri uri = Uri
-				.parse("content://com.yt.worlddatetime.citys.CityProvide/cities?notify=false");
-		String[] arrayOfString = { "_id", "display_name", "alternate_names",
-				"timezone", "country_code","utc_offset" };
-		asyncQuery.startQuery(0, null, uri, arrayOfString, null, null,
-				"display_name asc");
-		
-		setProgressBarIndeterminateVisibility(true);
+		if(this.queryList == null){
+			Uri uri = Uri
+					.parse("content://com.yt.worlddatetime.citys.CityProvide/cities?notify=false");
+			String[] arrayOfString = { "_id", "display_name", "alternate_names",
+					"timezone", "country_code","utc_offset" };
+			asyncQuery.startQuery(0, null, uri, arrayOfString, null, null,
+					"display_name asc");
+			
+			setProgressBarIndeterminateVisibility(true);
+		}
 		//final AlertDialog alertDialog = new AlertDialog.Builder(this).create();
 		//progressbar = ProgressDialog.show(this, "Loading Citys", "Loading...");
 
@@ -614,7 +620,13 @@ public class ListCountriesActivity extends Activity {
     		//		+ " ('"+display_name+"','"+city.getSortKey()+"',0,0,'"+city.getCode()+"','',"+city.getTextualId()+", '"+city.getDesc()+"')");
     		
     		
-    		ListCountriesActivity.this.finish();
+    		
+    		Intent intent = new Intent();
+    		intent.setClass(getApplicationContext(), MainActivity.class);
+    		startActivity(intent);
+    		//ListCountriesActivity.this.finish();
+    		
+    		
 			//Toast.makeText(ListCountriesActivity.this,
 			//		String.valueOf(position) + " id=" + city.getId()+" "+display_name+" "+noewtime, 1).show();
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- first style -->
+    <style name="AppWidget">
+        <item name="dial">@drawable/clock_dial</item>
+        <item name="hand_hour">@drawable/clock_hand_hour</item>
+        <item name="hand_minute">@drawable/clock_hand_minute</item>
+        <item name="hand_second">@drawable/clock_hand_second</item>
+    </style>
+ 
+
+</resources>

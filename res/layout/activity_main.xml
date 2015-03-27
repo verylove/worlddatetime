@@ -1,19 +1,18 @@
-<LinearLayout    xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.yt.worlddatetime.MainActivity"
     android:orientation="vertical"
-     >
+    tools:context="com.yt.worlddatetime.MainActivity" >
 
-        <ListView
-            android:id="@+id/mycitylist"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="#FFFFFF"
-            android:layout_weight="1" > 
-            
-        </ListView>
-       
-    
+    <ListView
+        android:paddingLeft="10dp"
+    	android:paddingRight="10dp"
+        android:id="@+id/mycitylist"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="#FFFFFF" >
+    </ListView>
+
 </LinearLayout>

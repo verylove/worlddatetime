@@ -1,0 +1,15 @@
+# view AndroidManifest.xml #generated:16
+-keep class com.yt.worlddatetime.MainActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:29
+-keep class com.yt.worlddatetime.citys.CityProvide { <init>(...); }
+
+# view AndroidManifest.xml #generated:26
+-keep class com.yt.worlddatetime.citys.ListCountriesActivity { <init>(...); }
+
+# view res/layout/cityslist.xml #generated:45
+-keep class com.yt.worlddatetime.citys.MyLetterListView { <init>(...); }
+
+# view res/layout/mycityitem.xml #generated:17
+-keep class com.yt.worlddatetime.tools.AnalogClock { <init>(...); }
+

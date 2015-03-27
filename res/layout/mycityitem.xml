@@ -4,26 +4,31 @@
     android:layout_height="90dp"
     android:orientation="horizontal" >
 
-
     <TextView
         android:id="@+id/CityName"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:background="#f00"
         android:layout_gravity="left|center"
         android:layout_weight="1"
+        android:textColor="#ff000000"
          />
+
     
-        
-            <TextView
-                android:gravity="right|center"
-                android:layout_weight="1"
+    <com.yt.worlddatetime.tools.AnalogClock
+        android:id="@+id/analogClock"
+        android:layout_weight="1"
+          android:layout_width="0dp"
+          style="@style/AppWidget" 
+        android:layout_height="50dp"
+      />
+ 
+
+    <TextView
         android:id="@+id/CityTime"
-		android:layout_width="0dp"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-
-        android:background="#ff0"
-         />
-
+        android:layout_weight="1"
+         android:textColor="#ff000000"
+        android:gravity="right|center" />
 
 </LinearLayout>
