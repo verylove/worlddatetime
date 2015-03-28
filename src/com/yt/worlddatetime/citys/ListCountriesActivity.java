@@ -105,8 +105,7 @@ public class ListCountriesActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		this.queryList = MainActivity.mListLocalCity;
-		Log.d("YT",this.queryList.size()+"");
+		this.mListLocalCity = MainActivity.mListLocalCity;
 		// 设置窗口特征：启用显示进度的进度条
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);  
 
@@ -121,12 +120,13 @@ public class ListCountriesActivity extends Activity {
 		letterListView
 				.setOnTouchingLetterChangedListener(new LetterListViewListener());
 
-		// asyncQuery = new MyAsyncQueryHandler(getContentResolver());
+		if(MainActivity.mListLocalCity==null) asyncQuery = new MyAsyncQueryHandler(getContentResolver());
 		alphaIndexer = new HashMap<String, Integer>();
 		handler = new Handler();
 		overlayThread = new OverlayThread();
 		queryContent.addTextChangedListener(textWatcher);
 	}
+
 
 	/**
 	 * 初始化部件
@@ -136,7 +136,7 @@ public class ListCountriesActivity extends Activity {
 		queryContent = (EditText) findViewById(R.id.queryContent);
 		listView = (ListView) findViewById(R.id.listview);	
 		MyLetterListView01 = (View)findViewById(R.id.MyLetterListView01);
-		setAdapter(this.queryList);
+		if(MainActivity.mListLocalCity!=null)	setAdapter(MainActivity.mListLocalCity);
 	}
 
 	@Override
@@ -144,7 +144,7 @@ public class ListCountriesActivity extends Activity {
 		super.onResume();
 		
 		startTime = System.nanoTime(); 
-		if(this.queryList == null){
+		if(MainActivity.mListLocalCity == null){
 			Uri uri = Uri
 					.parse("content://com.yt.worlddatetime.citys.CityProvide/cities?notify=false");
 			String[] arrayOfString = { "_id", "display_name", "alternate_names",
@@ -327,7 +327,7 @@ public class ListCountriesActivity extends Activity {
 				holder = (ViewHolder) convertView.getTag();
 			}
 
-			holder.name.setText(list.get(position).getName()+list.get(position).getCode());
+			holder.name.setText(list.get(position).getName());
 
 			if(list.get(position).getDesc().contains(".")){
 				holder.desc.setText("GMT "+list.get(position).getDesc().replace(".5", "")+":30");
@@ -474,6 +474,7 @@ public class ListCountriesActivity extends Activity {
 					mListLocalCity.add(cv);
 				}
 				if (mListLocalCity.size() > 0) {
+					MainActivity.mListLocalCity = mListLocalCity;
 					setAdapter(mListLocalCity);
 				}
 			}
@@ -639,8 +640,8 @@ public class ListCountriesActivity extends Activity {
 		@Override
 		public boolean onItemLongClick(AdapterView<?> parent, View view,
 				int position, long id) {
-			Toast.makeText(ListCountriesActivity.this, id + " 长按 " + position,
-					0).show();
+			//Toast.makeText(ListCountriesActivity.this, id + " 长按 " + position,
+			//		0).show();
 			return false;
 		}
 	}

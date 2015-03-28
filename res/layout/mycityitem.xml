@@ -7,8 +7,8 @@
     <TextView
         android:id="@+id/CityName"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_gravity="left|center"
+        android:layout_height="match_parent"
+        android:gravity="left|center"
         android:layout_weight="1"
         android:textColor="#ff000000"
          />
@@ -19,7 +19,7 @@
         android:layout_weight="1"
           android:layout_width="0dp"
           style="@style/AppWidget" 
-        android:layout_height="50dp"
+        android:layout_height="70dp"
       />
  
 

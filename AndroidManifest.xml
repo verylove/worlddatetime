@@ -23,10 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity  android:name=".citys.ListCountriesActivity" ></activity>
+        <activity  android:theme="@style/title_bg" android:name=".citys.ListCountriesActivity" ></activity>
         
         
         <provider android:name=".citys.CityProvide" android:authorities="com.yt.worlddatetime.citys.CityProvide"/>
     </application>
-
+<uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

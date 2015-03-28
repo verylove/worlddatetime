@@ -1,7 +1,11 @@
 package com.yt.worlddatetime;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Currency;
@@ -19,11 +23,15 @@ import org.json.JSONException;
 import com.yt.worlddatetime.citys.CityProvide.DBHelper;
 import com.yt.worlddatetime.citys.Countries;
 import com.yt.worlddatetime.citys.ListCountriesActivity;
+import com.yt.worlddatetime.tools.CheckUpdate;
+import com.yt.worlddatetime.tools.ScreenTools;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,9 +40,12 @@ import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -42,16 +53,20 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AnalogClock;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,18 +75,20 @@ public class MainActivity extends Activity {
 
 	private ListView listview;
 	public static  ArrayList<Countries> mListLocalCity = null;
-	
+	AsyncTask asyncTask;
 
 	final List<Map<String, ?>> data = new ArrayList<Map<String, ?>>();
 
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_main);
 	
-		AsyncTask asyncTask = new AsyncInitCitys();
+		asyncTask = new AsyncInitCitys();
 		asyncTask.execute("");
+
 		
 		Log.d("YT","---------------test");
 	}
@@ -82,7 +99,7 @@ public class MainActivity extends Activity {
 		@Override
 		protected Object doInBackground(Object... arg0) {
 
-			mListLocalCity = new ArrayList<Countries>();
+			ArrayList<Countries> tmp = new ArrayList<Countries>();
 			
 			DBHelper citys = new DBHelper(getApplicationContext());
 			
@@ -103,8 +120,10 @@ public class MainActivity extends Activity {
 				cv.setCode(cursor.getString(5));
 				cv.setDesc(cursor.getString(8));
 				
-				mListLocalCity.add(cv);
+				tmp.add(cv);
 			}
+			
+			mListLocalCity = tmp;
 			
 			Log.d("YT","Success loading !!");
 			
@@ -129,6 +148,7 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) { // 菜单响应函数
 		switch (item.getItemId()) {
 		case R.id.add:
+			//asyncTask.cancel(true);
 			Intent list = new Intent();
 			list.setClass(getApplicationContext(), ListCountriesActivity.class);
 			startActivity(list);
@@ -137,15 +157,25 @@ public class MainActivity extends Activity {
 			finish();
 			return true;
 		case R.id.update:
-
+			CheckUpdate cu = new CheckUpdate(this);
 			return true;
 		case R.id.about:
-
+			AlertDialog alertDialog = new AlertDialog.Builder(this).setMessage(   
+		            "关于我们").setPositiveButton("(*^__^*) 感谢您的使用！(*^__^*) ", null).create();   
+		    Window window = alertDialog.getWindow();   
+		    WindowManager.LayoutParams lp = window.getAttributes();   
+		    // 设置透明度为0.3   
+		    lp.alpha = 0.6f;   
+		    window.setAttributes(lp);   
+		    alertDialog.show(); 
 			return true;
 		}
 		return false;
 	}
 
+	
+	
+	
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
@@ -212,48 +242,87 @@ public class MainActivity extends Activity {
 
 			view.getLocationInWindow(Pos);
 
-			SelectDialog selectDialog = new SelectDialog(MainActivity.this,
-					R.style.tip_dialog);// 创建Dialog并设置样式主题
-			Window win = selectDialog.getWindow();
-			selectDialog.id = m.get("id");
-
-			LayoutParams params = new LayoutParams();
-			// params.x = Pos[0]+160;//设置x坐标
-			params.y = Pos[1] - 615;// 设置y坐标
-			Log.d("YT", Pos[0] + "-" + Pos[1]);
-			win.setAttributes(params);
-			win.setGravity(Gravity.RIGHT);
-			selectDialog.setCanceledOnTouchOutside(true);// 设置点击Dialog外部任意区域关闭Dialog
-			win.setWindowAnimations(R.style.dialogAnimationStyle); // 添加动画
-			selectDialog.show();
+			
+			
+			
+			SelectDialog addPopWindow = new SelectDialog(MainActivity.this);
+			addPopWindow.id = m.get("id");
+            addPopWindow.showPopupWindow(view);
+			
 
 		}
 
 	}
 
-	public class SelectDialog extends AlertDialog {
+	
+	
+	
+	public class SelectDialog extends PopupWindow {
 		private Button btnDel, btnNo;
 		public String id;
+	    private View conentView;  
+	    
 
-		public SelectDialog(Context context, int theme) {
-			super(context, theme);
-		}
-
-		public SelectDialog(Context context) {
-			super(context);
-		}
-
-		@Override
-		protected void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			setContentView(R.layout.tip_dialog);
-
-			btnDel = (Button) findViewById(R.id.btnDel);
-			btnNo = (Button) findViewById(R.id.btnNodel);
+		public  SelectDialog(final Activity context) {
+			LayoutInflater inflater = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			conentView = inflater.inflate(R.layout.tip_dialog, null);
+			int h = context.getWindowManager().getDefaultDisplay().getHeight();
+			int w = context.getWindowManager().getDefaultDisplay().getWidth();
+			// 设置SelectPicPopupWindow的View
+			this.setContentView(conentView);
+			// 设置SelectPicPopupWindow弹出窗体的宽
+			this.setWidth(w/2+50);
+			this.setHeight(h/2-500);
+		
+			
+			// 计算x轴方向的偏移量，使得PopupWindow在Title的正下方显示，此处的单位是pixels  
+		    int xoffInPixels = ScreenTools.getInstance(MainActivity.this).getScreenWidth() / 2  ;  
+		    // 将pixels转为dip  
+		    int xoffInDip = ScreenTools.getInstance(MainActivity.this).px2dip(xoffInPixels);  
+		   // this.showAsDropDown(this, -xoffInDip, 0);  
+		    
+		    
+			// 设置SelectPicPopupWindow弹出窗体的高
+			//this.setHeight(LayoutParams.WRAP_CONTENT);
+			// 设置SelectPicPopupWindow弹出窗体可点击
+			this.setFocusable(true);
+			this.setOutsideTouchable(true);
+			// 刷新状态
+			this.update();
+			// 实例化一个ColorDrawable颜色为半透明
+			ColorDrawable dw = new ColorDrawable(0000000000);
+			// 点back键和其他地方使其消失,设置了这个才能触发OnDismisslistener ，设置其他控件变化等操作
+			this.setBackgroundDrawable(dw);
+			// mPopupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
+			// 设置SelectPicPopupWindow弹出窗体动画效果
+			this.setAnimationStyle(R.style.AnimationPreview);
+			
+			btnDel = (Button) conentView.findViewById(R.id.btnDel);
+			btnNo = (Button) conentView.findViewById(R.id.btnNodel);
 			btnDel.setOnClickListener(new DelData(this));
 			btnNo.setOnClickListener(new noDelData(this));
+			
 		}
+		
 
+		class noDelData implements OnClickListener {
+
+			private SelectDialog sv;
+
+			noDelData(SelectDialog sv) {
+				this.sv = sv;
+			}
+
+			@Override
+			public void onClick(View v) {
+				this.sv.dismiss();
+
+			}
+
+		}
+		
+		
 		class DelData implements View.OnClickListener {
 			private SelectDialog sv;
 
@@ -268,7 +337,7 @@ public class MainActivity extends Activity {
 				db1 = citys.getWritableDatabase();
 
 				db1.delete("cities", "_id=?", new String[] { id });
-				this.sv.cancel();
+				this.sv.dismiss();
 				initData();
 				/*
 				 * db = citys.getReadableDatabase(); Cursor c =
@@ -292,25 +361,32 @@ public class MainActivity extends Activity {
 			}
 
 		}
-
-		class noDelData implements View.OnClickListener {
-
-			private SelectDialog sv;
-
-			noDelData(SelectDialog sv) {
-				this.sv = sv;
+		/**
+		 * 显示popupWindow
+		 * 
+		 * @param parent
+		 */
+		public void showPopupWindow(View parent) {
+			if (!this.isShowing()) {
+				// 以下拉方式显示popupwindow
+				this.showAsDropDown(parent, parent.getLayoutParams().width / 2, -240);
+			} else {
+				this.dismiss();
 			}
-
-			@Override
-			public void onClick(View v) {
-				this.sv.cancel();
-
-			}
-
 		}
+		
+		
+
+	
+
+		
 
 	}
 
+	
+	
+	
+	
 	class myCityAdapter implements ListAdapter {
 
 		LayoutInflater mInflater = LayoutInflater.from(getApplicationContext());

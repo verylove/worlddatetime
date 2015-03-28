@@ -245,10 +245,10 @@ public class AnalogClock extends View {
 		canvas.save();// 一定要保存一下
 		// 其次画日期
 		if (changed) {
-			w = (int) (mPaint.measureText(mWeek));// 计算文字的宽度
-			canvas.drawText(mWeek, (x - w / 2), y - (dialHeight / 8), mPaint);// 画文字在画板上，位置为中间两个参数
-			w = (int) (mPaint.measureText(mDay));
-			canvas.drawText(mDay, (x - w / 2), y + (dialHeight / 8), mPaint);// 同上
+			//w = (int) (mPaint.measureText(mWeek));// 计算文字的宽度
+			//canvas.drawText(mWeek, (x - w / 2), y - (dialHeight / 8), mPaint);// 画文字在画板上，位置为中间两个参数
+			//w = (int) (mPaint.measureText(mDay));
+			//canvas.drawText(mDay, (x - w / 2), y + (dialHeight / 8), mPaint);// 同上
 		}
 		// 再画时针
 		canvas.rotate(mHour / 12.0f * 360.0f, x, y);// 旋转画板，第一个参数为旋转角度，第二、三个参数为旋转坐标点
@@ -277,6 +277,7 @@ public class AnalogClock extends View {
 
 		canvas.save();
 		// 最后画秒针
+		/*
 		canvas.rotate(mSecond / 60.0f * 360.0f, x, y);
 		final Drawable secondHand = mSecondHand;
 		if (changed) {
@@ -291,6 +292,7 @@ public class AnalogClock extends View {
 		if (scaled) {
 			canvas.restore();
 		}
+				 */
 	}
 
 	/**

@@ -9,8 +9,8 @@ package com.yt.worlddatetime;
 
 public final class R {
     public static final class anim {
-        public static final int dialog_enter=0x7f040000;
-        public static final int dialog_exit=0x7f040001;
+        public static final int fade_in=0x7f040000;
+        public static final int fade_out=0x7f040001;
     }
     public static final class attr {
         /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
@@ -51,8 +51,10 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int clock_hand_minute=0x7f020003;
         public static final int clock_hand_second=0x7f020004;
         public static final int ic_launcher=0x7f020005;
-        public static final int poptext=0x7f020006;
-        public static final int searchbtn=0x7f020007;
+        public static final int popbg=0x7f020006;
+        public static final int popbg_pressed=0x7f020007;
+        public static final int poptext=0x7f020008;
+        public static final int searchbtn=0x7f020009;
     }
     public static final class id {
         public static final int CityName=0x7f0a0008;
@@ -100,6 +102,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int wednesday=0x7f080008;
     }
     public static final class style {
+        public static final int AnimationPreview=0x7f050003;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -129,12 +132,8 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         /**  first style 
          */
         public static final int AppWidget=0x7f050000;
-        public static final int Titleground=0x7f050006;
-        public static final int dialogAnimationStyle=0x7f050004;
-        /**  模糊 
-         */
-        public static final int tip_dialog=0x7f050003;
-        public static final int title_bg=0x7f050005;
+        public static final int Titleground=0x7f050005;
+        public static final int title_bg=0x7f050004;
     }
     public static final class styleable {
         /** Attributes that can be used with a AnalogClock.

@@ -6,7 +6,7 @@
         <item name="dial">@drawable/clock_dial</item>
         <item name="hand_hour">@drawable/clock_hand_hour</item>
         <item name="hand_minute">@drawable/clock_hand_minute</item>
-        <item name="hand_second">@drawable/clock_hand_second</item>
+        <item name="hand_second">@drawable/clock_hand_second</item> 
     </style>
  
 
