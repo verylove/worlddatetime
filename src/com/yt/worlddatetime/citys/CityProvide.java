@@ -99,7 +99,7 @@ public class CityProvide extends ContentProvider {
 	         
 	        
 	        try {
-				GZIPInputStream localGZIPInputStream = new GZIPInputStream(this.context.getAssets().open("cities15000.sql.gz.jpg"));
+				GZIPInputStream localGZIPInputStream = new GZIPInputStream(this.context.getAssets().open("ico.dat"));
 				BufferedReader localBufferedReader = new BufferedReader(new InputStreamReader(localGZIPInputStream, "UTF-8"), 32768);
 				for (;;)
 				{

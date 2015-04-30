@@ -60,20 +60,23 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int CityName=0x7f0a0008;
         public static final int CityTime=0x7f0a000a;
         public static final int MyLetterListView01=0x7f0a0004;
-        public static final int about=0x7f0a000f;
-        public static final int add=0x7f0a000d;
+        public static final int about=0x7f0a0012;
+        public static final int add=0x7f0a0010;
         public static final int alpha=0x7f0a0005;
         public static final int analogClock=0x7f0a0009;
-        public static final int btnDel=0x7f0a000b;
-        public static final int btnNodel=0x7f0a000c;
+        public static final int btnDel=0x7f0a000e;
+        public static final int btnNodel=0x7f0a000f;
         public static final int desc=0x7f0a0007;
         public static final int listview=0x7f0a0003;
         public static final int mycitylist=0x7f0a0000;
         public static final int name=0x7f0a0006;
+        public static final int progressPre=0x7f0a000c;
+        public static final int progressSize=0x7f0a000d;
         public static final int queryBtn=0x7f0a0001;
         public static final int queryContent=0x7f0a0002;
-        public static final int quit=0x7f0a0010;
-        public static final int update=0x7f0a000e;
+        public static final int quit=0x7f0a0013;
+        public static final int update=0x7f0a0011;
+        public static final int update_progress=0x7f0a000b;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -81,7 +84,9 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int listitem=0x7f030002;
         public static final int mycityitem=0x7f030003;
         public static final int overlay=0x7f030004;
-        public static final int tip_dialog=0x7f030005;
+        public static final int progressbar_mini=0x7f030005;
+        public static final int softupdate_progress=0x7f030006;
+        public static final int tip_dialog=0x7f030007;
     }
     public static final class menu {
         public static final int main=0x7f090000;
@@ -95,6 +100,13 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int monday=0x7f080006;
         public static final int quit=0x7f080005;
         public static final int saturday=0x7f08000b;
+        public static final int soft_update_cancel=0x7f080013;
+        public static final int soft_update_info=0x7f08000f;
+        public static final int soft_update_later=0x7f080011;
+        public static final int soft_update_no=0x7f08000d;
+        public static final int soft_update_title=0x7f08000e;
+        public static final int soft_update_updatebtn=0x7f080010;
+        public static final int soft_updating=0x7f080012;
         public static final int sunday=0x7f08000c;
         public static final int thursday=0x7f080009;
         public static final int tuesday=0x7f080007;

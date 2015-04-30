@@ -20,10 +20,13 @@ import java.util.zip.Inflater;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import com.umeng.analytics.MobclickAgent;
 import com.yt.worlddatetime.citys.CityProvide.DBHelper;
 import com.yt.worlddatetime.citys.Countries;
 import com.yt.worlddatetime.citys.ListCountriesActivity;
-import com.yt.worlddatetime.tools.CheckUpdate;
+import com.yt.worlddatetime.delete.CheckUpdate;
+import com.yt.worlddatetime.tools.CheckVersion;
+import com.yt.worlddatetime.tools.ExitApplication;
 import com.yt.worlddatetime.tools.ScreenTools;
 
 import android.app.Activity;
@@ -35,6 +38,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.DataSetObserver;
@@ -78,19 +82,27 @@ public class MainActivity extends Activity {
 	AsyncTask asyncTask;
 
 	final List<Map<String, ?>> data = new ArrayList<Map<String, ?>>();
-
+    
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_main);
-	
+		ExitApplication.getInstance().addActivity(this);
+		
+		MobclickAgent.updateOnlineConfig( getApplicationContext() );
+		
+		CheckVersion manager = new CheckVersion(MainActivity.this);
+	        // 检查软件更新
+	    manager.checkUpdate();
+		
 		asyncTask = new AsyncInitCitys();
 		asyncTask.execute("");
 
 		
-		Log.d("YT","---------------test");
+		//Log.d("YT","---------------test");
 	}
 
 	
@@ -125,7 +137,7 @@ public class MainActivity extends Activity {
 			
 			mListLocalCity = tmp;
 			
-			Log.d("YT","Success loading !!");
+			//Log.d("YT","Success loading !!");
 			
 			return null;
 		}
@@ -154,18 +166,28 @@ public class MainActivity extends Activity {
 			startActivity(list);
 			return true;
 		case R.id.quit:
-			finish();
+			ExitApplication.getInstance().exit();
+		
 			return true;
 		case R.id.update:
-			CheckUpdate cu = new CheckUpdate(this);
+			CheckVersion cu = new CheckVersion(this);
+			cu.displayTip = true;
+			cu.checkUpdate();
 			return true;
 		case R.id.about:
+			String versionCode = "1.0";
+			try {
+				 versionCode = getApplicationContext().getPackageManager().getPackageInfo("com.yt.worlddatetime", 0).versionName;
+			} catch (NameNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			AlertDialog alertDialog = new AlertDialog.Builder(this).setMessage(   
-		            "关于我们").setPositiveButton("(*^__^*) 感谢您的使用！(*^__^*) ", null).create();   
+		            "关于我们").setPositiveButton("感谢您的使用！   version :"+versionCode+"", null).create();   
 		    Window window = alertDialog.getWindow();   
 		    WindowManager.LayoutParams lp = window.getAttributes();   
 		    // 设置透明度为0.3   
-		    lp.alpha = 0.6f;   
+		    //lp.alpha = 0.6f;   
 		    window.setAttributes(lp);   
 		    alertDialog.show(); 
 			return true;
@@ -173,13 +195,19 @@ public class MainActivity extends Activity {
 		return false;
 	}
 
-	
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		MobclickAgent.onPause(this);
+	}
 	
 	
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
+		MobclickAgent.onResume(this);
 		initData();
 	}
 

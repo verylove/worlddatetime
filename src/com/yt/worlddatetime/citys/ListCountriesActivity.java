@@ -39,6 +39,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,10 +60,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.umeng.analytics.MobclickAgent;
 import com.yt.worlddatetime.MainActivity;
 import com.yt.worlddatetime.Mycitys;
 import com.yt.worlddatetime.R;
 import com.yt.worlddatetime.citys.MyLetterListView.OnTouchingLetterChangedListener;
+import com.yt.worlddatetime.tools.ExitApplication;
 
 public class ListCountriesActivity extends Activity {
 
@@ -110,7 +113,8 @@ public class ListCountriesActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);  
 
 		setContentView(R.layout.cityslist);
-
+		ExitApplication.getInstance().addActivity(this);
+		
 		initwidget();
 		listView.setOnItemClickListener(itemClickListener);
 		listView.setOnItemLongClickListener(itemLongClickListener);
@@ -139,10 +143,32 @@ public class ListCountriesActivity extends Activity {
 		if(MainActivity.mListLocalCity!=null)	setAdapter(MainActivity.mListLocalCity);
 	}
 
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// TODO Auto-generated method stub
+		
+		if(keyCode==KeyEvent.KEYCODE_BACK){
+			this.finish();
+		}
+		
+		return super.onKeyDown(keyCode, event);
+	}
+
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		MobclickAgent.onPause(this);
+	}
+	
+	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+		MobclickAgent.onResume(this);
 		startTime = System.nanoTime(); 
 		if(MainActivity.mListLocalCity == null){
 			Uri uri = Uri
@@ -619,6 +645,7 @@ public class ListCountriesActivity extends Activity {
     		//db.execSQL("INSERT INTO cities"
     		//		+ " (display_name, alternate_names, latitude, longitude, country_code, admin1_code, timezone, utc_offset) VALUES"
     		//		+ " ('"+display_name+"','"+city.getSortKey()+"',0,0,'"+city.getCode()+"','',"+city.getTextualId()+", '"+city.getDesc()+"')");
+    		
     		
     		
     		
