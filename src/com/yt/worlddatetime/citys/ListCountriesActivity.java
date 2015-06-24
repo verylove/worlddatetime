@@ -60,6 +60,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.umeng.analytics.MobclickAgent;
 import com.yt.worlddatetime.MainActivity;
 import com.yt.worlddatetime.Mycitys;
@@ -103,7 +105,7 @@ public class ListCountriesActivity extends Activity {
 	private List<Countries> queryList = new ArrayList<Countries>();
 
 	public boolean overlayFlag = true;
-
+	AdView mAdView;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -114,6 +116,11 @@ public class ListCountriesActivity extends Activity {
 
 		setContentView(R.layout.cityslist);
 		ExitApplication.getInstance().addActivity(this);
+		
+		
+		 mAdView = (AdView) findViewById(R.id.adView);
+	     AdRequest adRequest = new AdRequest.Builder().build();
+	     mAdView.loadAd(adRequest);
 		
 		initwidget();
 		listView.setOnItemClickListener(itemClickListener);

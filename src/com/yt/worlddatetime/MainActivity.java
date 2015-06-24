@@ -29,6 +29,7 @@ import com.yt.worlddatetime.tools.CheckVersion;
 import com.yt.worlddatetime.tools.ExitApplication;
 import com.yt.worlddatetime.tools.ScreenTools;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -74,13 +75,16 @@ import android.widget.PopupWindow;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 public class MainActivity extends Activity {
 
 	private ListView listview;
 	public static  ArrayList<Countries> mListLocalCity = null;
 	AsyncTask asyncTask;
-
+	AdView mAdView;
+	
 	final List<Map<String, ?>> data = new ArrayList<Map<String, ?>>();
     
 	
@@ -90,6 +94,17 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_main);
+		
+		
+		 mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+		
+		
+		 ActionBar actionBar = getActionBar();  
+		 actionBar.setDisplayHomeAsUpEnabled(true);
+		    
+		    
 		ExitApplication.getInstance().addActivity(this);
 		
 		MobclickAgent.updateOnlineConfig( getApplicationContext() );
@@ -159,6 +174,11 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) { // 菜单响应函数
 		switch (item.getItemId()) {
+		case android.R.id.home:
+			Toast.makeText(this,   
+			        "You clicked on the Application icon",   
+			        Toast.LENGTH_LONG).show();  
+			break;
 		case R.id.add:
 			//asyncTask.cancel(true);
 			Intent list = new Intent();

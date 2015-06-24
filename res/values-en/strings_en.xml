@@ -2,4 +2,22 @@
 <resources>
     <string name="app_name">World City Time</string>
     <string name="inputcity">input query City...</string>
+    <string name="addcity">add city</string>
+    <string name="update">check upgrade</string>
+    <string name="about">about us</string>
+    <string name="quit">exit system</string>
+    <string name="monday">monday</string>
+    <string name="tuesday">tuesday</string>
+    <string name="wednesday">wednesday</string>
+    <string name="thursday">thursday</string>
+    <string name="friday">friday</string>
+    <string name="saturday">saturday</string>
+    <string name="sunday">sunday</string>
+    <string name="soft_update_no">is the latest version of</string>
+    <string name="soft_update_title">software update</string>
+    <string name="soft_update_info"> pro~ have a new version of it,immediately update ?</string>
+    <string name="soft_update_updatebtn">update</string>
+    <string name="soft_update_later">later update</string>
+    <string name="soft_updating">is being updated</string>
+    <string name="soft_update_cancel">cancel</string>
 </resources>
